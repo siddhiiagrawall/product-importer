@@ -1,172 +1,147 @@
 Product Importer — FastAPI + Celery + Redis + PostgreSQL
 
-A scalable backend application for importing large CSV product files (up to 500,000 rows) with real-time progress tracking, a basic UI, and full async processing using Celery.
+A scalable backend for importing large CSV product files (tested to 500,000 rows) with real-time progress tracking, a small UI, and asynchronous processing via Celery.
 
-This app satisfies assignment requirements (Stories 1 & 1A):
+This repository implements the assignment stories 1 and 1A:
 
-File upload via UI
+- File upload via a simple UI
+- Asynchronous CSV processing with Celery
+- Upsert behavior using SKU as the unique key
+- Real-time progress updates via Server-Sent Events (SSE)
 
-Asynchronous CSV processing
+Tech stack
 
-Upsert with SKU uniqueness
+- Backend: FastAPI
+- Worker: Celery
+- Broker: Redis
+- Database: PostgreSQL
+- ORM: SQLAlchemy
+- Realtime: Server-Sent Events (SSE)
+- Frontend: Minimal HTML + JS
 
-Real-time progress via SSE
-
-Progress bar UI
-
-PostgreSQL storage
-
-Redis-backed event streaming
-
-TECH STACK
-
-Backend API: FastAPI
-Async Worker: Celery
-Message Broker: Redis
-Database: PostgreSQL
-ORM: SQLAlchemy
-Realtime Updates: Server-Sent Events (SSE)
-Frontend: Basic HTML + JS
-
-PROJECT STRUCTURE
-
-product-importer/
+Project layout (top-level)
 
 app/
-
-main.py
-
-api/
-
-upload.py
-
-progress.py
-
-tasks/
-
-importer.py
-
-db.py
-
-core/
-
-celery_app.py
-
-models.py
-
-templates/
-
-upload.html
-
-static/
-
-upload.js
-
-styles.css
+	├─ api/           # API endpoints
+	├─ tasks/         # Celery task implementations
+	├─ core/          # Celery app / config
+	├─ models.py      # SQLAlchemy models
+	├─ db.py          # Database utilities
+	└─ main.py        # FastAPI application entry
 
 scripts/
+	└─ create_tables.py
 
-create_tables.py
-
-uploads/
-
-.env
+uploads/            # Stored uploaded CSVs (gitignored)
 
 README.md
-
 requirements.txt
 
-SETUP INSTRUCTIONS
+Setup (Windows)
 
-Create virtual environment (Windows)
+1. Create and activate a virtual environment
+
+```powershell
 py -3.11 -m venv venv
-venv\Scripts\activate
+venv\Scripts\Activate.ps1  # PowerShell
+# or: venv\Scripts\activate.bat  (cmd.exe)
+```
 
-Install dependencies
+2. Install dependencies
+
+```powershell
 pip install -r requirements.txt
+```
 
-Create PostgreSQL database
-Open psql and run:
+3. Create the PostgreSQL database (psql)
+
+```sql
 CREATE DATABASE products_db;
+```
 
-Create tables
+4. Create database tables
+
+```powershell
 python scripts/create_tables.py
+```
 
-Start Redis (Windows)
-Start redis-server in a separate terminal.
+5. Start Redis
 
-Start FastAPI server
+On Windows you can run redis-server (WSL or a native build). Start it in a separate terminal.
+
+6. Start the FastAPI server
+
+```powershell
 uvicorn app.main:app --reload --port 8000
+```
 
-Start Celery worker
+7. Start a Celery worker (use the solo pool on Windows)
+
+```powershell
 celery -A app.core.celery_app.celery worker --loglevel=info --pool=solo
+```
 
-FILE UPLOAD FLOW (Story 1)
+File upload flow (story 1)
 
-User selects CSV file
+1. User selects a CSV file in the upload UI
+2. The file is saved to `uploads/`
+3. A Celery task processes the CSV in the background (chunked inserts)
+4. Rows are inserted or upserted into PostgreSQL using SKU uniqueness
+5. Progress updates are published to Redis and streamed to clients via SSE
 
-File saved to /uploads
+Realtime progress (story 1A)
 
-Celery async task processes the CSV
+The frontend connects to an SSE endpoint such as:
 
-CSV processed in chunks of 10,000 rows
-
-Rows inserted or upserted into PostgreSQL
-
-Redis stores progress updates
-
-UI shows real-time progress
-
-REAL-TIME PROGRESS (Story 1A)
-
-Frontend connects to:
 GET /api/progress/{upload_id}/sse
 
-Backend streams progress JSON:
-{"percent": 34, "status": "processing"}
+The server sends JSON progress events, for example:
 
-UI updates progress bar live.
+{"percent": 34, "status": "processing"}
 
 UI
 
-Open in browser:
+Open the upload page in your browser:
+
 http://127.0.0.1:8000/upload
 
-Features:
+Features
 
-File chooser
+- File chooser and upload button
+- Live progress bar updated via SSE
+- Status messages
 
-Upload button
+Testing
 
-Live progress bar
-
-Status messages
-
-TESTING
-
-Create a test CSV file:
+Create a small CSV to verify behavior:
 
 sku,name,description,price
 SKU1,Product A,Description A,10.99
 SKU2,Product B,Description B,20.50
 SKU3,Product C,Description C,30.00
 
-Upload via UI and watch the progress bar update.
+Upload it through the UI and observe the progress bar.
 
-FEATURES COMPLETED
+Completed items
 
-Story 1 — File Upload: Completed
-Story 1A — Upload Progress: Completed
-Async CSV Processing: Completed
-Chunked Insert with Upsert: Completed
-SSE Streaming: Completed
-Upload UI: Completed
+- Story 1 — File upload: Completed
+- Story 1A — Upload progress: Completed
+- Asynchronous CSV processing: Completed
+- Chunked insert with upsert: Completed
+- SSE streaming: Completed
+- Upload UI: Completed
 
-NEXT PHASES
+Next phases
 
-Story 2 — Product CRUD UI
-Story 3 — Bulk Delete
-Story 4 — Webhooks management
-Deployment to Render
-Final testing
-Commit cleanup
+- Story 2 — Product CRUD UI
+- Story 3 — Bulk delete
+- Story 4 — Webhooks management
+- Deployment (e.g. Render)
+- Final testing and cleanup
+
+Notes
+
+- Rename `requirments.txt` to `requirements.txt` if present. I updated the README to reference `requirements.txt`.
+- Ensure `uploads/` is in `.gitignore` so uploaded files are not committed.
+
+If you want, I can also create a `.gitignore` and rename the file on disk.

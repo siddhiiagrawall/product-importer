@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Product Management</h2>
+
+<!-- Filters -->
+<div class="filters">
+    <input type="text" id="filterSku" placeholder="Search SKU">
+    <input type="text" id="filterName" placeholder="Search Name">
+    <select id="filterActive">
+        <option value="">All</option>
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+    </select>
+    <button onclick="loadProducts(1)">Search</button>
+    <button id="addBtn">Add Product</button>
+</div>
+
+<!-- Products Table -->
+<table id="productTable">
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Pagination -->
+<div id="pagination">
+    <button id="prevPage">Previous</button>
+    <span id="pageInfo"></span>
+    <button id="nextPage">Next</button>
+</div>
+
+<!-- Add/Edit Modal -->
+<div id="modal" class="modal hidden">
+    <div class="modal-content">
+        <h3 id="modalTitle"></h3>
+
+        <label>SKU</label>
+        <input id="modalSku">
+
+        <label>Name</label>
+        <input id="modalName">
+
+        <label>Description</label>
+        <input id="modalDesc">
+
+        <label>Price</label>
+        <input id="modalPrice" type="number" step="0.01">
+
+        <label>Active</label>
+        <select id="modalActive">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+        </select>
+
+        <button id="saveBtn">Save</button>
+        <button onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<script src="/static/products.js"></script>
+
+{% endblock %}
