@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Webhook Management</h2>
+
+<button onclick="openAdd()">Add Webhook</button>
+
+<table id="webhookTable">
+    <thead>
+        <tr>
+            <th>URL</th>
+            <th>Event</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<div id="modal" class="modal hidden">
+    <div class="modal-content">
+        <h3 id="modalTitle"></h3>
+        
+        <label>URL</label>
+        <input id="modalUrl">
+
+        <label>Event</label>
+        <input id="modalEvent">
+
+        <label>Active</label>
+        <select id="modalActive">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+        </select>
+
+        <button id="saveBtn">Save</button>
+        <button onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<script src="/static/webhooks.js"></script>
+
+{% endblock %}

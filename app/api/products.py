@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from app.db import get_db_session, SessionLocal
 from app.models import Product, products
+from app.services.webhook_trigger import trigger_event
 
 router = APIRouter()
 
@@ -44,36 +45,66 @@ def create_product(payload: dict, db: Session = Depends(get_db)):
     sku = payload.get("sku")
     if not sku:
         raise HTTPException(status_code=400, detail="sku required")
-    prod = Product(sku=sku, name=payload.get("name"), description=payload.get("description"), price=payload.get("price"), active=payload.get("active", True))
+
+    prod = Product(
+        sku=sku,
+        name=payload.get("name"),
+        description=payload.get("description"),
+        price=payload.get("price"),
+        active=payload.get("active", True)
+    )
+
     db.add(prod)
     db.commit()
     db.refresh(prod)
+
+    # 🔥 Trigger webhook
+    trigger_event("product.created", prod.to_dict())
+
     return prod.to_dict()
+
 
 @router.put("/products/{product_id}")
 def update_product(product_id: int, payload: dict, db: Session = Depends(get_db)):
     stmt = select(Product).where(products.c.id == product_id)
     result = db.execute(stmt).scalars().first()
+
     if not result:
         raise HTTPException(404, "not found")
+
     for k in ("sku", "name", "description", "price", "active"):
         if k in payload:
             setattr(result, k, payload[k])
             if k == "sku":
                 result.sku_lower = payload[k].lower()
+
     db.commit()
     db.refresh(result)
+
+    # 🔥 Trigger webhook
+    trigger_event("product.updated", result.to_dict())
+
     return result.to_dict()
+
 
 @router.delete("/products/{product_id}")
 def delete_product(product_id: int, db: Session = Depends(get_db)):
     stmt = select(Product).where(products.c.id == product_id)
     result = db.execute(stmt).scalars().first()
+
     if not result:
         raise HTTPException(404, "not found")
+
+    data = {"id": result.id}
+
     db.delete(result)
     db.commit()
-    return {"status":"deleted"}
+
+    # 🔥 Trigger webhook
+    trigger_event("product.deleted", data)
+
+    return {"status": "deleted"}
+
 
 @router.get("/products/{product_id}")
 def get_product(product_id: int, db: Session = Depends(get_db)):

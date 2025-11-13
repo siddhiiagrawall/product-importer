@@ -24,6 +24,10 @@ def home(request: Request):
 def product_page(request: Request):
     return templates.TemplateResponse("products.html", {"request": request})
 
+@app.get("/webhooks")
+def webhook_page(request: Request):
+    return templates.TemplateResponse("webhooks.html", {"request": request})
+
 # --------------------
 # API ROUTES (Backend)
 # --------------------

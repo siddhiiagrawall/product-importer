@@ -47,3 +47,38 @@ class Product:
 
 
 mapper_registry.map_imperatively(Product, products)
+
+# -------------------------------
+# WEBHOOKS TABLE + ORM MAPPING
+# -------------------------------
+
+webhooks = Table(
+    "webhooks",
+    metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("url", Text, nullable=False),
+    Column("event", String(255), nullable=False),
+    Column("active", Boolean, nullable=False, server_default="true"),
+    Column("created_at", DateTime(timezone=True), server_default=func.now()),
+)
+
+
+class Webhook:
+    def __init__(self, url, event, active=True):
+        self.url = url
+        self.event = event
+        self.active = active
+
+    def to_dict(self):
+        return {
+            "id": getattr(self, "id", None),
+            "url": self.url,
+            "event": self.event,
+            "active": self.active,
+            "created_at": getattr(self, "created_at", None),
+        }
+
+
+# Map ORM -> Table
+mapper_registry.map_imperatively(Webhook, webhooks)
+
