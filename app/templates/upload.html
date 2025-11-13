@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Upload CSV File</h2>
+
+<form id="uploadForm">
+    <input type="file" id="csvFile" accept=".csv" required />
+    <button type="submit">Upload</button>
+</form>
+
+<div id="status" style="margin-top:20px;"></div>
+
+<div id="progress-container" style="display:none;margin-top:20px;">
+    <div id="progress-bar"></div>
+</div>
+
+<script src="/static/upload.js" defer></script>
+{% endblock %}

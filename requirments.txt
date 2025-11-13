@@ -10,3 +10,6 @@ celery[redis]
 redis
 python-multipart
 aiofiles
+
+jinja2
+python-multipart

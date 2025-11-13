@@ -1,0 +1,4 @@
+with open("big_test.csv", "w", encoding="utf-8") as f:
+    f.write("sku,name,description,price\n")
+    for i in range(1, 10001):
+        f.write(f"SKU{i:05},Product {i},Description {i},{i % 100 + 0.99}\n")
