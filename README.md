@@ -2,7 +2,7 @@ Product Importer — FastAPI + Celery + Redis + PostgreSQL
 
 A scalable backend for importing large CSV product files (tested to 500,000 rows) with real-time progress tracking, a small UI, and asynchronous processing via Celery.
 
-This repository implements the assignment stories 1 and 1A:
+This repository implements the assignment stories 1, 1A, 2, 3 and 4 (all stories completed):
 
 - File upload via a simple UI
 - Asynchronous CSV processing with Celery
@@ -122,10 +122,14 @@ SKU3,Product C,Description C,30.00
 
 Upload it through the UI and observe the progress bar.
 
+
 Completed items
 
 - Story 1 — File upload: Completed
 - Story 1A — Upload progress: Completed
+- Story 2 — Product CRUD UI: Completed
+- Story 3 — Bulk delete: Completed
+- Story 4 — Webhooks management: Completed
 - Asynchronous CSV processing: Completed
 - Chunked insert with upsert: Completed
 - SSE streaming: Completed
@@ -133,11 +137,7 @@ Completed items
 
 Next phases
 
-- Story 2 — Product CRUD UI
-- Story 3 — Bulk delete
-- Story 4 — Webhooks management
-- Deployment (e.g. Render)
-- Final testing and cleanup
+- Optional improvements & maintenance: deployment automation, additional end-to-end tests, monitoring, and small UX refinements (no outstanding assignment stories remain).
 
 Notes
 
