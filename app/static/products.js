@@ -54,6 +54,22 @@ function openAdd() {
     document.getElementById("modalActive").value = "true";
 }
 
+document.getElementById("deleteAllBtn").onclick = async () => {
+    if (!confirm("⚠️ Are you sure? This will delete ALL products permanently.")) return;
+
+    const resp = await fetch("/api/products", {
+        method: "DELETE"
+    });
+
+    if (resp.ok) {
+        alert("All products deleted successfully.");
+        loadProducts(1);
+    } else {
+        alert("Failed to delete products.");
+    }
+};
+
+
 async function openEdit(id) {
     currentEditingId = id;
 

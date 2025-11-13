@@ -83,3 +83,9 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
         raise HTTPException(404, "not found")
     return result.to_dict()
 
+@router.delete("/products")
+def delete_all_products(db: Session = Depends(get_db)):
+    db.execute(products.delete())
+    db.commit()
+    return {"status": "all_deleted"}
+
