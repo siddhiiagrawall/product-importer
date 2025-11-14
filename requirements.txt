@@ -12,4 +12,9 @@ python-multipart
 aiofiles
 
 jinja2
-python-multipart
+
+# NEW: Required for SSE progress API
+sse-starlette
+
+# NEW: Required for webhook test feature
+httpx
