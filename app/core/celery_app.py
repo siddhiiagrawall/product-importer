@@ -13,7 +13,16 @@ celery = Celery(
     backend=CELERY_BACKEND,
     include=["app.tasks.importer"],
 )
+# Add SSL required by Upstash
+celery.conf.broker_transport_options = {
+    "ssl": {
+        "ssl_cert_reqs": "CERT_NONE"
+    }
+}
 
+celery.conf.redis_backend_use_ssl = {
+    "ssl_cert_reqs": "CERT_NONE"
+}
 celery.conf.update(
     task_routes={
         "app.tasks.*": {"queue": "default"}

@@ -13,7 +13,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 REDIS_URL = os.getenv("REDIS_URL")
-r = redis.Redis.from_url(REDIS_URL, decode_responses=True)
+r = redis.Redis.from_url(
+    os.getenv("REDIS_URL"),
+    decode_responses=True,
+    ssl_cert_reqs=None
+)
 
 CHUNK_SIZE = 5000  # smaller chunk = smoother progress updates
 

@@ -14,7 +14,11 @@ UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Initialize Redis
-r = redis.Redis.from_url(os.getenv("REDIS_URL"))
+r = redis.Redis.from_url(
+    os.getenv("REDIS_URL"),
+    decode_responses=True,
+    ssl_cert_reqs=None
+)
 
 @router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
@@ -44,7 +48,7 @@ def progress_stream(upload_id: str):
     while True:
         raw = r.get(f"progress:{upload_id}")
         if raw:
-            data = raw.decode()
+            data = raw
             yield f"data: {data}\n\n"
 
             parsed = json.loads(data)

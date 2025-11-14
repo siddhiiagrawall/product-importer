@@ -5,7 +5,11 @@ import redis, os, json, time
 
 router = APIRouter()
 
-r = redis.Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True)
+r = redis.Redis.from_url(
+    os.getenv("REDIS_URL"),
+    decode_responses=True,
+    ssl_cert_reqs=None
+)
 
 @router.get("/progress/{upload_id}/sse")
 async def sse_progress(upload_id: str):

@@ -2,8 +2,12 @@ from app.core.celery_app import celery
 import redis
 import os
 
-REDIS_URL = os.getenv("REDIS_URL")
-r = redis.Redis.from_url(REDIS_URL)
+r = redis.Redis.from_url(
+    os.getenv("REDIS_URL"),
+    decode_responses=True,
+    ssl_cert_reqs=None
+)
+
 
 @celery.task(bind=True)
 def import_csv_task(self, upload_id, filepath):

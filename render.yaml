@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: product-importer-web
+    env: python
+    region: singapore
+    repo: https://github.com/siddhiiagrawall/product-importer
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+
+  - type: worker
+    name: product-importer-worker
+    env: python
+    region: singapore
+    repo: https://github.com/<your_username>/product-importer
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A app.core.celery_app.celery worker --loglevel=info --pool=solo
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
