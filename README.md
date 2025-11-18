@@ -1,5 +1,7 @@
 Product Importer — FastAPI + Celery + Redis + PostgreSQL
+
 Deployed : product-importer-web-production.up.railway.app
+
 A scalable backend for importing large CSV product files (tested to 500,000 rows) with real-time progress tracking, a small UI, and asynchronous processing via Celery.
 
 This repository implements the assignment stories 1, 1A, 2, 3 and 4 (all stories completed):
